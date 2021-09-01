@@ -53,6 +53,12 @@ img2_b3 = getBrightness3(img2)
 [img1_b3_pcs, img2_b3_pcs] = getCmpStrColor(img1_b3/255*100, img2_b3/255*100, +1, 1)
 print ("brightness 3\t", img1_b3_s+",", img1_b3_pcs+"%", "\t\t\t", img2_b3_s+",", img2_b3_pcs+"%")
 
+# Blur level
+img1_blur = getBlurLevel(img1)
+img2_blur = getBlurLevel(img2)
+[img1_blur_s, img2_blur_s] = getCmpStrColor(img1_blur, img2_blur, +1, 0)
+print ("blur \t\t", img1_blur_s, "\t\t\t\t", img2_blur_s)
+
 
 if SHOULD_SHOW:
 	# Resize

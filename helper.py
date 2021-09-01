@@ -27,3 +27,7 @@ def getBrightness3(img):
 	return v
 
 
+def getBlurLevel(img):
+	# Blur level is the variance of the Laplacian of the image
+	# A higher value mean more focus and less blur
+	return cv.Laplacian(img, cv.CV_64F).var()
