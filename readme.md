@@ -6,7 +6,7 @@ The comparison is based on the following criteria.
 ### Criteria
 - Image size OK   
 - Image resolution OK   
-- Brightness (Todo)   
+- Brightness OK   
 - Blur (Todo)   
 - Light saturation (Todo)   
 - Main object centering (Todo)
