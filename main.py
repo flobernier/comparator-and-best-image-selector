@@ -3,6 +3,7 @@
 import cv2 as cv
 print ("OpenCV", cv.__version__)
 import os
+import time
 from colors import *
 from helper import *
 
@@ -31,17 +32,18 @@ img2_size = os.path.getsize(img2_filename)
 print ("size (kBytes)\t", img1_size_s, "\t\t\t\t", img2_size_s)
 print ("resolution \t", img1.shape, "\t\t", img2.shape)
 
+start = time.perf_counter()
 # Mean color
 img1_mean = getRGBMean(img1)
 img2_mean = getRGBMean(img2)
-print ("mean color \t", img1_mean, "\t\t", img2_mean)
+print ("mean RGB color \t", img1_mean, "\t\t", img2_mean)
 
 # Brightness
 img1_b1 = getBrightness1(img1)
 img2_b1 = getBrightness1(img2)
 [img1_b1_s, img2_b1_s] = getCmpStrColor(img1_b1, img2_b1, +1)
 [img1_b1_pcs, img2_b1_pcs] = getCmpStrColor(img1_b1/255*100, img2_b1/255*100, +1, 1)
-print ("brightness 1\t", img1_b1_s+",", img1_b1_pcs+"%", "\t\t\t", img2_b1_s+",", img2_b1_pcs+"%")
+#print ("brightness 1\t", img1_b1_s+",", img1_b1_pcs+"%", "\t\t\t", img2_b1_s+",", img2_b1_pcs+"%")
 img1_b2 = getBrightness2(img1)
 img2_b2 = getBrightness2(img2)
 [img1_b2_s, img2_b2_s] = getCmpStrColor(img1_b2, img2_b2, +1)
@@ -51,14 +53,24 @@ img1_b3 = getBrightness3(img1)
 img2_b3 = getBrightness3(img2)
 [img1_b3_s, img2_b3_s] = getCmpStrColor(img1_b3, img2_b3, +1)
 [img1_b3_pcs, img2_b3_pcs] = getCmpStrColor(img1_b3/255*100, img2_b3/255*100, +1, 1)
-print ("brightness 3\t", img1_b3_s+",", img1_b3_pcs+"%", "\t\t\t", img2_b3_s+",", img2_b3_pcs+"%")
+#print ("brightness 3\t", img1_b3_s+",", img1_b3_pcs+"%", "\t\t\t", img2_b3_s+",", img2_b3_pcs+"%")
+end = time.perf_counter()
+#print ("time bright\t", round((end-start)*1000.0), " ms")
 
+start = time.perf_counter()
 # Blur level
 img1_blur = getBlurLevel(img1)
 img2_blur = getBlurLevel(img2)
+end = time.perf_counter()
 [img1_blur_s, img2_blur_s] = getCmpStrColor(img1_blur, img2_blur, +1, 0)
 print ("blur \t\t", img1_blur_s, "\t\t\t\t", img2_blur_s)
+#print ("time blur\t", round((end-start)*1000.0), " ms")
 
+# Saturation
+img1_sat = getSaturation(img1)
+img2_sat = getSaturation(img2)
+[img1_sat_s, img2_sat_s] = getCmpStrColor(img1_sat, img2_sat, -1, 0)
+print ("saturation \t", img1_sat_s, "\t\t\t\t", img2_sat_s)
 
 if SHOULD_SHOW:
 	# Resize

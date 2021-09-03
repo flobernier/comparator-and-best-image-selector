@@ -8,6 +8,7 @@ The comparison is based on the following criteria.
 - Image resolution OK   
 - Mean Brightness OK   
 - Mean Blur OK   
+- Mean Saturation OK
 - Light saturation (Todo)   
 - Main object centering (Todo)
 

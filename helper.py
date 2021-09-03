@@ -26,6 +26,12 @@ def getBrightness3(img):
 	h,s,v,_ = cv.mean(hsv_img)
 	return v
 
+def getSaturation(img):
+	# Get Saturation from HSV
+	hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+	h,s,v,_ = cv.mean(hsv_img)
+	return s
+
 
 def getBlurLevel(img):
 	# Blur level is the variance of the Laplacian of the image
