@@ -68,16 +68,18 @@ def openImage(img_filename):
 		print ("Could not read ", img_filename)
 	return img
 
+
 # @brief	Get image information
 # @param[in]	img_filename Source image filename
+# @param[in]	img_path Source image path + filename
 # @param[in]	img Source image
 # @return	List of information in the following order
 # 		[filename, size, shape, mean_color, brightness, blur_level, saturation]
-def getImageInfo(img_filename, img):
+def getImageInfo(img_path, img_filename, img):
 	# Memory size (kBytes)
-	img_size = os.path.getsize(img_filename)/1000.0
-	# Shape (h, w, d)
-	img_shape = img.shape
+	img_size = os.path.getsize(img_path)/1000.0
+	# Shape (height, width, nb_channels)
+	img_shape = (img.shape[1], img.shape[0])
 	# Mean RGB color
 	img_mean = getRGBMean(img)
 	# Brightness
@@ -105,7 +107,7 @@ def printImageInfo(imgs_info):
 	row_names = ["name", "size (kBytes)", "resolution",
 		"mean RGB color", "brightness 2", "blur", "saturation"]
 	max_w_row_names = max(len(i) for i in row_names)
-	print ("max_w_row_names", max_w_row_names, "w_res", 16)
+	#print ("max_w_row_names", max_w_row_names, "w_res", 16)
 
 	# Image identifier
 	print ("\t\t", end=" ")
@@ -128,7 +130,7 @@ def printImageInfo(imgs_info):
 	print ("resolution\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_info[i][2])
-		else : print (imgs_info[i][2], "\t", end=" ")
+		else : print (imgs_info[i][2], "\t\t", end=" ")
 	# Mean RGB color
 	print ("mean RGB color\t", end=" ")
 	for i in range(imgs_nb):
