@@ -9,7 +9,7 @@ The comparison is based on the following criteria.
 - Mean Brightness OK   
 - Mean Blur OK   
 - Mean Saturation OK
-- Light saturation (Todo)   
+- Light saturation OK   
 - Main object centering (Todo)
 
 ## Requirements

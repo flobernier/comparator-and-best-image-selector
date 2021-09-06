@@ -48,6 +48,30 @@ def getSaturation(img):
 	h,s,v,_ = cv.mean(hsv_img)
 	return s
 
+# @brief	Get white pixels percentage with HSV mask
+# @param[in]	img Source image
+# @return	White pixels percentage
+def getPercentWhite(img):
+	# Convert to HSV image
+	gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+	img = cv.cvtColor(gray_img, cv.COLOR_GRAY2BGR)
+	hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+
+	sensitivity = (16, 32)
+	percent_white = [None] * len(sensitivity)
+	mask = [None] * len(sensitivity)
+	for i in range(len(sensitivity)):
+		lower_bound = (0, 0, 255 - sensitivity[i])
+		upper_bound = (255, sensitivity[i], 255)
+		# Create mask
+		mask[i] = cv.inRange(hsv_img, lower_bound, upper_bound)
+		# Get percentage of white pixels
+		height, width = mask[i].shape[:2]
+		num_pixels = height * width
+		count_white = cv.countNonZero(mask[i])
+		percent_white[i] = (count_white/num_pixels)*100.0
+	return percent_white
+
 # @brief	Get blur level for an image
 # @param[in]	img Source image
 # @return	Blur level
@@ -88,11 +112,15 @@ def getImageInfo(img_path, img_filename, img):
 	#img_b3 = getBrightness3(img)
 	# Saturation
 	img_sat = getSaturation(img)
+	# White pixel percentage
+	img_sat2 = getPercentWhite(img)
+	img_sat2 = [round(i, 1) for i in img_sat2]
 	# Blur level
 	img_blur = getBlurLevel(img)
 
 	return [img_filename, round(img_size), img_shape, img_mean,
-		round(img_b2), round(img_sat), round(img_blur)]
+		round(img_b2), round(img_sat), img_sat2,
+		round(img_blur)]
 
 
 def getRowFrom2DArray(arr, idx):
@@ -148,12 +176,19 @@ def printImageInfo(imgs_info):
 	# Saturation
 	imgs_sat = getRowFrom2DArray(imgs_info, 5)
 	imgs_sat_s = getStrColorList(imgs_sat, -1)
-	print ("saturation\t", end=" ")
+	print ("mean saturation\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_sat_s[i])
 		else : print (imgs_sat_s[i], "\t\t\t", end=" ")
+	# White pixel percentage
+	imgs_sat = getRowFrom2DArray(imgs_info, 6)
+	imgs_sat_s = getStrColorList(imgs_sat, -1)
+	print ("White pixels\t", end=" ")
+	for i in range(imgs_nb):
+		if i == imgs_nb-1: print (imgs_sat_s[i]+"%")
+		else : print (imgs_sat_s[i]+"%", "\t\t", end=" ")
 	# Blur
-	imgs_blur = getRowFrom2DArray(imgs_info, 6)
+	imgs_blur = getRowFrom2DArray(imgs_info, 7)
 	imgs_blur_s = getStrColorList(imgs_blur, +1)
 	print ("blur\t\t", end=" ")
 	for i in range(imgs_nb):
