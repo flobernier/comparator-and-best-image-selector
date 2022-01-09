@@ -4,6 +4,7 @@ import cv2 as cv
 import os
 import math
 from colors import *
+from criterion_stats import *
 
 
 # @brief	Get mean RGB values for an image
@@ -98,7 +99,8 @@ def openImage(img_filename):
 # @param[in]	img_path Source image path + filename
 # @param[in]	img Source image
 # @return	List of information in the following order
-# 		[filename, size, shape, mean_color, brightness, blur_level, saturation]
+# 		[filename, size, shape, mean_color, brightness, saturation,
+#		 white_pixels1, white_pixels2, blur_level]
 def getImageInfo(img_path, img_filename, img):
 	# Memory size (kBytes)
 	img_size = os.path.getsize(img_path)/1000.0
@@ -113,13 +115,15 @@ def getImageInfo(img_path, img_filename, img):
 	# Saturation
 	img_sat = getSaturation(img)
 	# White pixel percentage
-	img_sat2 = getPercentWhite(img)
-	img_sat2 = [round(i, 1) for i in img_sat2]
+	img_wpp = getPercentWhite(img)
+	img_wpp = [round(i, 1) for i in img_wpp]
+	img_wpp1 = img_wpp[0]
+	img_wpp2 = img_wpp[1]
 	# Blur level
 	img_blur = getBlurLevel(img)
 
 	return [img_filename, round(img_size), img_shape, img_mean,
-		round(img_b2), round(img_sat), img_sat2,
+		round(img_b2), round(img_sat), img_wpp1, img_wpp2,
 		round(img_blur)]
 
 
@@ -132,8 +136,9 @@ def getRowFrom2DArray(arr, idx):
 
 def printImageInfo(imgs_info):
 	imgs_nb = len(imgs_info)
-	row_names = ["name", "size (kBytes)", "resolution",
-		"mean RGB color", "brightness 2", "blur", "saturation"]
+	row_names = ["name", "size (kBytes)", "resolution", "mean RGB color",
+		     "brightness 2", "saturation", "white_pixels1",
+		     "white_pixels2", "blur"]
 	max_w_row_names = max(len(i) for i in row_names)
 	#print ("max_w_row_names", max_w_row_names, "w_res", 16)
 
@@ -180,18 +185,30 @@ def printImageInfo(imgs_info):
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_sat_s[i])
 		else : print (imgs_sat_s[i], "\t\t\t", end=" ")
-	# White pixel percentage
-	imgs_sat = getRowFrom2DArray(imgs_info, 6)
-	imgs_sat_s = getStrColorList(imgs_sat, -1)
-	print ("White pixels\t", end=" ")
+	# White pixel percentage 1
+	imgs_wpp1 = getRowFrom2DArray(imgs_info, 6)
+	imgs_wpp1_s = getStrColorList(imgs_wpp1, -1)
+	print ("White pixels1\t", end=" ")
 	for i in range(imgs_nb):
-		if i == imgs_nb-1: print (imgs_sat_s[i]+"%")
-		else : print (imgs_sat_s[i]+"%", "\t\t", end=" ")
+		if i == imgs_nb-1: print (imgs_wpp1_s[i]+"%")
+		else : print (imgs_wpp1_s[i]+"%", "\t\t\t", end=" ")
+	# White pixel percentage 2
+	imgs_wpp2 = getRowFrom2DArray(imgs_info, 7)
+	imgs_wpp2_s = getStrColorList(imgs_wpp2, -1)
+	print ("White pixels2\t", end=" ")
+	for i in range(imgs_nb):
+		if i == imgs_nb-1: print (imgs_wpp2_s[i]+"%")
+		else : print (imgs_wpp2_s[i]+"%", "\t\t\t", end=" ")
 	# Blur
-	imgs_blur = getRowFrom2DArray(imgs_info, 7)
+	imgs_blur = getRowFrom2DArray(imgs_info, 8)
 	imgs_blur_s = getStrColorList(imgs_blur, +1)
 	print ("blur\t\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_blur_s[i])
 		else : print (imgs_blur_s[i], "\t\t\t", end=" ")
+
+
+def printImageInfo2(imgs_info):
+	my_stats = CriterionStats(imgs_info)
+	print ("Best img is:", my_stats.best_index, imgs_info[my_stats.best_index][0])
 

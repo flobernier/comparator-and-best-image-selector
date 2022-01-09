@@ -8,7 +8,7 @@ from colors import *
 from helper import *
 
 ## PARAMETERS ##
-path = "./test2"
+path = "./test/test2"
 SHOULD_SHOW = True
 
 
@@ -46,6 +46,7 @@ for i in range(imgs_nb):
 # Display info
 #start = time.perf_counter()
 printImageInfo(imgs_info)
+printImageInfo2(imgs_info)
 #end = time.perf_counter()
 #print ("time print", round((end-start)*1000,3), " ms")
 
