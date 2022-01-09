@@ -210,5 +210,5 @@ def printImageInfo(imgs_info):
 
 def printImageInfo2(imgs_info):
 	my_stats = CriterionStats(imgs_info)
-	print ("Best img is:", my_stats.best_index, imgs_info[my_stats.best_index][0])
+	print ("Best image is:", my_stats.best_index+1, "<=>", imgs_info[my_stats.best_index][0])
 
