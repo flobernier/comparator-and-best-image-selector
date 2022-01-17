@@ -146,29 +146,32 @@ def printImageInfo(imgs_info):
 	print ("\t\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print ("img"+str(i+1))
-		else : print ("img"+str(i+1), "\t\t\t", end=" ")
+		else : print ("img"+str(i+1), "\t\t", end=" ")
 	# Name
 	print ("name\t\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_info[i][0])
-		else : print (imgs_info[i][0], "\t\t", end=" ")
+		else : print (imgs_info[i][0], "\t", end=" ")
 	# Size
 	imgs_size = getRowFrom2DArray(imgs_info, 1)
 	imgs_size_s = getStrColorList(imgs_size, -1)
 	print ("size (kBytes)\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_size_s[i])
-		else : print (imgs_size_s[i], "\t\t\t", end=" ")
+		else : print (imgs_size_s[i], "\t\t", end=" ")
 	# Resolution
 	print ("resolution\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_info[i][2])
-		else : print (imgs_info[i][2], "\t\t", end=" ")
+		else : print (imgs_info[i][2], "\t", end=" ")
 	# Mean RGB color
 	print ("mean RGB color\t", end=" ")
 	for i in range(imgs_nb):
-		if i == imgs_nb-1: print (imgs_info[i][3])
-		else : print (imgs_info[i][3], "\t", end=" ")
+		rgb = imgs_info[i][3]
+		if i == imgs_nb-1:
+			print ("["+str(rgb[0])+","+str(rgb[1])+","+str(rgb[2])+"]")
+		else :
+			print ("["+str(rgb[0])+","+str(rgb[1])+","+str(rgb[2])+"]\t", end=" ")
 	# Brightness 2
 	imgs_b = getRowFrom2DArray(imgs_info, 4)
 	imgs_bpc = [round(imgs_b[i]*100.0/255.0, 1) for i in range(len(imgs_b))]
@@ -177,38 +180,45 @@ def printImageInfo(imgs_info):
 	print ("brightness 2\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_b_s[i]+",", imgs_bpc_s[i]+"%")
-		else : print (imgs_b_s[i]+",", imgs_bpc_s[i]+"%", "\t\t", end=" ")
+		else : print (imgs_b_s[i]+",", imgs_bpc_s[i]+"%", "\t", end=" ")
 	# Saturation
 	imgs_sat = getRowFrom2DArray(imgs_info, 5)
 	imgs_sat_s = getStrColorList(imgs_sat, -1)
 	print ("mean saturation\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_sat_s[i])
-		else : print (imgs_sat_s[i], "\t\t\t", end=" ")
+		else : print (imgs_sat_s[i], "\t\t", end=" ")
 	# White pixel percentage 1
 	imgs_wpp1 = getRowFrom2DArray(imgs_info, 6)
 	imgs_wpp1_s = getStrColorList(imgs_wpp1, -1)
-	print ("White pixels1\t", end=" ")
+	print ("white pixels1\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_wpp1_s[i]+"%")
-		else : print (imgs_wpp1_s[i]+"%", "\t\t\t", end=" ")
+		else : print (imgs_wpp1_s[i]+"%", "\t\t", end=" ")
 	# White pixel percentage 2
 	imgs_wpp2 = getRowFrom2DArray(imgs_info, 7)
 	imgs_wpp2_s = getStrColorList(imgs_wpp2, -1)
-	print ("White pixels2\t", end=" ")
+	print ("white pixels2\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_wpp2_s[i]+"%")
-		else : print (imgs_wpp2_s[i]+"%", "\t\t\t", end=" ")
+		else : print (imgs_wpp2_s[i]+"%", "\t\t", end=" ")
 	# Blur
 	imgs_blur = getRowFrom2DArray(imgs_info, 8)
 	imgs_blur_s = getStrColorList(imgs_blur, +1)
 	print ("blur\t\t", end=" ")
 	for i in range(imgs_nb):
 		if i == imgs_nb-1: print (imgs_blur_s[i])
-		else : print (imgs_blur_s[i], "\t\t\t", end=" ")
+		else : print (imgs_blur_s[i], "\t\t", end=" ")
 
 
 def printImageInfo2(imgs_info):
 	my_stats = CriterionStats(imgs_info)
+
+	imgs_nb = len(imgs_info)
+	score_tot_s = getStrColorList(my_stats.score_tot, +1)
+	print ("score\t\t", end=" ")
+	for i in range(imgs_nb):
+		if i == imgs_nb-1: print (score_tot_s[i])
+		else : print (score_tot_s[i], "\t\t", end=" ")
 	print ("Best image is:", my_stats.best_index+1, "<=>", imgs_info[my_stats.best_index][0])
 

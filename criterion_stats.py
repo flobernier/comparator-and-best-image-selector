@@ -66,7 +66,7 @@ class CriterionStats:
 			self.score_tot[i] += self.criteria[CRIT_ID_WPP1].score[i]
 			self.score_tot[i] += self.criteria[CRIT_ID_WPP2].score[i]
 			self.score_tot[i] += self.criteria[CRIT_ID_BLUR].score[i]
-		print ("score_tot:", self.score_tot)
+		#print ("score_tot:", self.score_tot)
 
 		# Best image
 		self.best_index = indexesOf(self.score_tot, max(self.score_tot))
