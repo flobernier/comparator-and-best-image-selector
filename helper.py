@@ -5,6 +5,7 @@ import os
 import math
 from colors import *
 from criterion_stats import *
+from csv_helper import *
 
 
 # @brief	Get mean RGB values for an image
@@ -134,6 +135,8 @@ def getRowFrom2DArray(arr, idx):
 	return r
 
 
+# @brief	Print image information to screen
+# @param[in]	imgs_info Image information with predefined format
 def printImageInfo(imgs_info):
 	imgs_nb = len(imgs_info)
 	row_names = ["name", "size (kBytes)", "resolution", "mean RGB color",
@@ -211,7 +214,10 @@ def printImageInfo(imgs_info):
 		else : print (imgs_blur_s[i], "\t\t", end=" ")
 
 
-def printImageInfo2(imgs_info):
+# @brief	Compute and Print total score for each image
+# @param[in]	imgs_info Image information with predefined format
+# @return	List of total score for each image
+def printImageScore(imgs_info):
 	my_stats = CriterionStats(imgs_info)
 
 	imgs_nb = len(imgs_info)
@@ -221,4 +227,37 @@ def printImageInfo2(imgs_info):
 		if i == imgs_nb-1: print (score_tot_s[i])
 		else : print (score_tot_s[i], "\t\t", end=" ")
 	print ("Best image is:", my_stats.best_index+1, "<=>", imgs_info[my_stats.best_index][0])
+
+	return my_stats.score_tot
+
+
+# @brief	Format and Write image information and score to a csv file
+# @param[in]	imgs_info Image information with predefined format
+# @param[in]	imgs_score List of total score for each image
+def saveCSV(imgs_info, imgs_score):
+	imgs_nb = len(imgs_info)
+	rows_list = []
+
+	# Image identifier
+	imgs_id = []
+	for i in range(imgs_nb+1):
+		if i == 0: imgs_id.append("")
+		else: imgs_id.append("img"+str(i))
+	rows_list.append(imgs_id)
+
+	# Format rows info
+	row_names = ["name", "size (kBytes)", "resolution", "mean RGB color",
+		     "brightness 2", "mean saturation", "white pixels1",
+		     "white pixels2", "blur"]
+	for r in range(len(row_names)):
+		row = [row_names[r]] + [str(imgs_info[i][r]) for i in range(imgs_nb)]
+		#print (row)
+		rows_list.append(row)
+
+	# Score
+	rows_list.append(["score"] + [str(imgs_score[i]) for i in range(imgs_nb)])
+	#print (rows_list)
+
+	# Write to CSV
+	writeCSV(rows_list)
 

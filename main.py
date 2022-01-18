@@ -46,7 +46,8 @@ for i in range(imgs_nb):
 # Display info
 #start = time.perf_counter()
 printImageInfo(imgs_info)
-printImageInfo2(imgs_info)
+imgs_score = printImageScore(imgs_info)
+saveCSV(imgs_info, imgs_score)
 #end = time.perf_counter()
 #print ("time print", round((end-start)*1000,3), " ms")
 
