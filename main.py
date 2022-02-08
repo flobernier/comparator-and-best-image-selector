@@ -13,17 +13,10 @@ SHOULD_SHOW = True
 
 
 ## MAIN ##
-# Get images filename in folder
+# Get images paths and filenames in folder
 #start = time.perf_counter()
-imgs_path = []
-for (dirpath, dirnames, imgs_filename) in os.walk(path, topdown=True):
-	pass
-imgs_filename.sort()
-#print (imgs_filename)
-imgs_nb = len(imgs_filename)
-# Image path
-for i in range(imgs_nb):
-	imgs_path.append(path + "/" + imgs_filename[i])
+(imgs_path, imgs_filename) = getImgPath(path)
+imgs_nb = len(imgs_path)
 #end = time.perf_counter()
 #print ("time fname", round((end-start)*1000,3), " ms")
 
