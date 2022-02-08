@@ -228,6 +228,9 @@ def printImageScore(imgs_info):
 		else : print (score_tot_s[i], "\t\t", end=" ")
 	print ("Best image is:", my_stats.best_index+1, "<=>", imgs_info[my_stats.best_index][0])
 
+	high_fnames = [imgs_info[i][0] for i in my_stats.high_index]
+	print ("High score images:", high_fnames)
+
 	return my_stats.score_tot
 
 

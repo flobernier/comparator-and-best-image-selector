@@ -25,7 +25,10 @@ class CriterionStats:
 
 		# Image stats
 		self.score_tot = [0] * self.nb_img
+		self.score_tot_median = 0
+		self.score_tot_std = 0
 		self.best_index = -1
+		self.high_index = []
 
 		# Criterion objects
 		self.criteria = []
@@ -68,12 +71,21 @@ class CriterionStats:
 			self.score_tot[i] += self.criteria[CRIT_ID_BLUR].score[i]
 		#print ("score_tot:", self.score_tot)
 
-		# Best image
+		# Find Best image
 		self.best_index = indexesOf(self.score_tot, max(self.score_tot))
 		if len(self.best_index) != 1:
 			print ("More than one winner", self.best_index)
 		else:
 			self.best_index = self.best_index[0]
+
+		# Find images with high score
+		self.score_tot_median = statistics.median(self.score_tot)
+		self.score_tot_std = statistics.stdev(self.score_tot)
+		#print ("score_tot median:", self.score_tot_median, "  std:", round(self.score_tot_std, 2))
+		for i in range(self.nb_img):
+			if self.score_tot[i] >= (self.score_tot_median + self.score_tot_std):
+				#print (i, " ", self.score_tot[i])
+				self.high_index.append(i)
 
 
 	def getRowFrom2DArray(self, arr, idx):
