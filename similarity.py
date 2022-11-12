@@ -6,7 +6,11 @@ import math
 
 import os
 import time
+
 path = "./test/samples2"
+SIMILARITY_WIDTH     = 80 # pixels
+SIMILARITY_HEIGHT    = 60 # pixels
+MSSISM_MIN_THRESHOLD = 0.3 # % - MSSISM minimum threshold for two similar images
 
 
 # @brief	Compute Peak Signal to Noise Ratio (PSNR) between two images
@@ -71,16 +75,75 @@ def getMSSISM(i1, i2):
 	return mssim
 
 
-
-
 # @brief        Open image
 # @param[in]    img_filename Source image filename
-# @return       Image
+# @return       Image or None if imread failed
 def openImage(img_filename):
 	img = cv.imread(img_filename)
 	if img is None:
 		print ("Could not read ", img_filename)
 	return img
+
+
+# @brief        Similarity check
+# @param[in]    imgs_filename List of images file names
+# @param[in]    imgs List of images
+# @param[in]    imgs_width List of images original width before resizing
+# @param[in]    imgs_height List of images original height before resizing
+# @return       Group of similar images
+def similarityCheck(imgs_filename, imgs, imgs_width, imgs_height):
+	similar_img_groups = [[]]
+	group_counter = 0
+	# Save first img in first group
+	similar_img_groups[group_counter].append(imgs_filename[0])
+
+	for i in range(1, len(imgs)):
+		#start = time.perf_counter()
+
+		idxA = i-1
+		idxB = i
+		sim_val = [0, 0, 0, 0]
+		psnr_val = 0
+		is_similar = True
+
+		# Check images width and height
+		if (imgs_width[idxA] != imgs_width[idxB] or imgs_height[idxA] != imgs_height[idxB]):
+			# Images have different size and are not in the same group
+			print ("DIFF Width/Height: ", imgs_filename[idxA], "and", imgs_filename[idxB])
+			is_similar = False
+
+		# Get MSSISM and PSNR
+		sim_val = getMSSISM(imgs[idxA], imgs[idxB])
+		sim_sum = round(sum(sim_val)/3, 2)
+		psnr_val = round(getPSNR(imgs[idxA], imgs[idxB]), 2)
+
+		sim_val = [round(i, 2) for i in sim_val]
+
+		# Check similarity with MSSISM
+		if (sim_sum <= MSSISM_MIN_THRESHOLD):
+			# Images are not similar
+			print ("DIFF MSSISM ", imgs_filename[idxA], "and", imgs_filename[idxB])
+			is_similar = False
+
+		# Save img filename in group
+		if (is_similar == False):
+			group_counter += 1
+			similar_img_groups.append([])
+		similar_img_groups[group_counter].append(imgs_filename[idxB])
+		#print ("group_counter", group_counter, "\t", similar_img_groups)
+
+		#end = time.perf_counter()
+		print (imgs_filename[idxA], "and", imgs_filename[idxB],
+			"  sim_sum:", sim_sum, "  psnr:", psnr_val, "  similarity:", sim_val)
+		#print ("time sim", round((end-start)*1000,3), " ms")
+
+	# Display groups
+	for i in range(0, len(similar_img_groups)):
+		imgs_nb = len(similar_img_groups[i])
+		if (imgs_nb > 0):
+			print ("GROUP", i, ": ", similar_img_groups[i][0], "to", similar_img_groups[i][(imgs_nb-1)])
+
+
 
 
 ## MAIN ##
@@ -96,9 +159,14 @@ for i in range(imgs_nb):
         imgs_path.append(path + "/" + imgs_filename[i])
 
 # Open images
+start = time.perf_counter()
 imgs = []
 for path in imgs_path:
-        imgs.append(openImage(path))
+	img_it = openImage(path)
+	if (type(img_it) != type(None)):
+	        imgs.append(img_it)
+end = time.perf_counter()
+print ("time open", round((end-start)*1000,3), " ms")
 
 # Get image size and Resize
 imgs_width = []
@@ -113,37 +181,18 @@ min_height = min(imgs_height)
 max_height = max(imgs_height)
 print ("w  min", min_width, "  max", max_width)
 print ("h  min", min_height, "  max", max_height)
-# Resize only if images size are different
-if (min_width != max_width) or (min_height != max_height):
-	for img in imgs:
-		dim = (min(imgs_width), min(imgs_height))
-		r_imgs.append(cv.resize(img, dim, cv.INTER_AREA))
-else:
-	r_imgs = imgs
+# Resize img for performance
+start = time.perf_counter()
+for img in imgs:
+	dim = (SIMILARITY_WIDTH, SIMILARITY_HEIGHT)
+	#img = cv.resize(img, dim, cv.INTER_AREA)
+	r_imgs.append(cv.resize(img, dim, cv.INTER_AREA))
+end = time.perf_counter()
+print ("time resize", round((end-start)*1000,3), " ms")
 
 
 # Similarity check
 #start = time.perf_counter()
-for i in range(1, len(r_imgs)):
-	img_idxA = i-1
-	img_idxB = i
-	sim_val = [0, 0, 0, 0]
-	psnr_val = 0
-	# If images have not the same size, use reduced images
-	if ((imgs_width[img_idxA] != imgs_width[img_idxB])
-	or (imgs_height[img_idxA] != imgs_height[img_idxB])):
-		sim_val = getMSSISM(r_imgs[img_idxA], r_imgs[img_idxB])
-		sim_sum = 0.0
-		psnr_val = round(getPSNR(r_imgs[img_idxA], r_imgs[img_idxB]), 2)
-	else:
-		sim_val = getMSSISM(imgs[img_idxA], imgs[img_idxB])
-		sim_sum = round(sum(sim_val), 2)
-		psnr_val = round(getPSNR(imgs[img_idxA], imgs[img_idxB]), 2)
-	sim_val = [round(i, 2) for i in sim_val]
-
-
-	print (imgs_filename[img_idxA], "and", imgs_filename[img_idxB],
-		"  similarity:", sim_val, "  sim_sum:", sim_sum, "  psnr:", psnr_val)
-
+similarityCheck(imgs_filename, r_imgs, imgs_width, imgs_height)
 #end = time.perf_counter()
 #print ("time sim", round((end-start)*1000,3), " ms")
