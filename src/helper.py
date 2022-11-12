@@ -3,9 +3,9 @@
 import cv2 as cv
 import os
 import math
-from colors import *
-from criterion_stats import *
-from csv_helper import *
+from src.colors import *
+from src.criterion_stats import *
+from src.csv_helper import *
 
 
 # @brief	Get mean RGB values for an image

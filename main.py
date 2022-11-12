@@ -4,8 +4,8 @@ import cv2 as cv
 print ("OpenCV", cv.__version__)
 import os
 import time
-from colors import *
-from helper import *
+from src.colors import *
+from src.helper import *
 
 ## PARAMETERS ##
 path = "./test/test2"

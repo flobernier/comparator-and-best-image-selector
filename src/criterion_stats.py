@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from criterion import *
+from src.criterion import *
 
 # Constants
 CRIT_ID_FILENAME   = 0
