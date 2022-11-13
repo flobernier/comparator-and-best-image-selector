@@ -1,50 +1,110 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import cv2 as cv
-print ("OpenCV", cv.__version__)
+import numpy as np
+import math
+from src.image import *
+from src.helper import *
+from similarity import *
+
 import os
 import time
-from src.colors import *
-from src.helper import *
 
 ## PARAMETERS ##
-path = "./test/test2"
-SHOULD_SHOW = True
+path = "./test/samples2"
+SIMILARITY_WIDTH     = 80 # pixels
+SIMILARITY_HEIGHT    = 60 # pixels
+MSSISM_MIN_THRESHOLD = 0.3 # % - MSSISM minimum threshold for two similar images
+FAST_MODE = True
 
 
 ## MAIN ##
 # Get images paths and filenames in folder
 #start = time.perf_counter()
-(imgs_path, imgs_filename) = getImgPath(path)
-imgs_nb = len(imgs_path)
+imgs_obj = getImgPath2(path)
+imgs_nb = len(imgs_obj)
 #end = time.perf_counter()
 #print ("time fname", round((end-start)*1000,3), " ms")
+print ("Number of images: ", imgs_nb) 
 
 # Open images
+start = time.perf_counter()
+for i in range(0, imgs_nb):
+	imgs_obj[i].openImage()
+end = time.perf_counter()
+print ("time open  ", round((end-start)*1000, 0), " ms")
+
+# Get image size and Resize
+for i in range(0, imgs_nb):
+	imgs_obj[i].updateShape()
+# Resize img for performance
 #start = time.perf_counter()
-imgs = []
-for path in imgs_path:
-	imgs.append(openImage(path))
+for i in range(0, imgs_nb):
+	dim = (SIMILARITY_WIDTH, SIMILARITY_HEIGHT)
+	imgs_obj[i].resize(dim)
 #end = time.perf_counter()
-#print ("time open ", round((end-start)*1000), " ms")
+#print ("time resize", round((end-start)*1000, 3), " ms")
+
+
+# Similarity check
+start = time.perf_counter()
+groups = [[]]
+groups = similarityCheck2(imgs_obj)
+groups_nb = len(groups)
+end = time.perf_counter()
+print ("time sim   ", round((end-start)*1000, 3), " ms")
+# Display groups
+#for i in range(0, len(groups)):
+#	group_img_nb = len(groups[i])
+#	if (group_img_nb > 0):
+#		print ("GROUP", i, ": ", groups[i][0], "to", groups[i][(group_img_nb-1)])
+
 
 # Get Image info
-#start = time.perf_counter()
-imgs_info = []
-for i in range(imgs_nb):
-	imgs_info.append(getImageInfo(imgs_path[i], imgs_filename[i], imgs[i]))
-#end = time.perf_counter()
-#print ("time gInfo", round((end-start)*1000), " ms")
+start = time.perf_counter()
+groups_info = [[] for i in range(groups_nb)]
+for i in range(0, imgs_nb):
+	# Resize image for Fast mode
+	if (FAST_MODE == True):
+		dim = (int(imgs_obj[i].width/2), int(imgs_obj[i].height/2))
+		imgs_obj[i].resize(dim)
+
+	imgs_obj[i].computeImageInfo(FAST_MODE)
+	#print ("i:", i, imgs_obj[i].filename, "  group_index:", imgs_obj[i].group_index)
+	groups_info[imgs_obj[i].group_index].append(imgs_obj[i].getImageInfo())
+	#print (groups_info[imgs_obj[i].group_index])
+end = time.perf_counter()
+print ("time gInfo ", round((end-start)*1000, 0), " ms")
+
 
 # Display info
 #start = time.perf_counter()
-printImageInfo(imgs_info)
-imgs_score = printImageScore(imgs_info)
-saveCSV(imgs_info, imgs_score)
+for i in range(0, len(groups_info)):
+	group_img_nb = len(groups[i])
+	print ("GROUP", i, ": ", groups[i][0], "to", groups[i][(group_img_nb-1)])
+#	printImageInfo(groups_info[i])
+
+	# Get images score
+#	imgs_score = printImageScore(groups_info[i])
+	[best_index, high_indexes] = getBestImages(groups_info[i])
+	if (type(best_index) == list):
+		print ("Best image are:\t\t", end=" ")
+		for j in range(0, len(best_index)):
+			print (groups_info[i][best_index[j]][0], "\t", end=" ")
+		print("")
+	else:	
+		print ("Best image is:", groups_info[i][best_index][0])
+
+	if (len(high_indexes) > 1):
+		high_fnames = [groups_info[i][j][0] for j in high_indexes]
+		print ("High score images:", high_fnames)
+	print ("")
+#	saveCSV(groups_info[i], imgs_score)
 #end = time.perf_counter()
-#print ("time print", round((end-start)*1000,3), " ms")
+#print ("time print ", round((end-start)*1000, 3), " ms")
 
 
+'''
 # Show comparison
 if SHOULD_SHOW:
 	# Resize
@@ -58,5 +118,5 @@ if SHOULD_SHOW:
 
 	cv.imshow("Comparison", img0)
 	cv.waitKey(0)
-
+'''
 

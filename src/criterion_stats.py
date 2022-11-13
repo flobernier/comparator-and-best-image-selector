@@ -74,7 +74,8 @@ class CriterionStats:
 		# Find Best image
 		self.best_index = indexesOf(self.score_tot, max(self.score_tot))
 		if len(self.best_index) != 1:
-			print ("More than one winner", self.best_index)
+			#print ("More than one winner", self.best_index)
+			pass
 		else:
 			self.best_index = self.best_index[0]
 

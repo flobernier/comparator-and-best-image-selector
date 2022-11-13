@@ -255,6 +255,26 @@ def printImageScore(imgs_info):
 	return my_stats.score_tot
 
 
+# @brief	Compute and Return best image and high score images indexes
+# @param[in]	imgs_info Image information with predefined format
+# @return	List of [best_score_index and [high_score_index1, ...]]
+def getBestImages(imgs_info):
+	my_stats = CriterionStats(imgs_info)
+
+	imgs_nb = len(imgs_info)
+	score_tot_s = getStrColorList(my_stats.score_tot, +1)
+	#print ("score\t\t", end=" ")
+	#for i in range(imgs_nb):
+	#	if i == imgs_nb-1: print (score_tot_s[i])
+	#	else : print (score_tot_s[i], "\t\t", end=" ")
+	#print ("Best image is:", my_stats.best_index+1, "<=>", imgs_info[my_stats.best_index][0])
+
+	high_fnames = [imgs_info[i][0] for i in my_stats.high_index]
+	#print ("High score images:", high_fnames)
+
+	return [my_stats.best_index, my_stats.high_index]
+
+
 # @brief	Format and Write image information and score to a csv file
 # @param[in]	imgs_info Image information with predefined format
 # @param[in]	imgs_score List of total score for each image

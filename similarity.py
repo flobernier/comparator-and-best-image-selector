@@ -109,7 +109,7 @@ def similarityCheck(imgs_filename, imgs, imgs_width, imgs_height):
 		# Check images width and height
 		if (imgs_width[idxA] != imgs_width[idxB] or imgs_height[idxA] != imgs_height[idxB]):
 			# Images have different size and are not in the same group
-			print ("DIFF Width/Height: ", imgs_filename[idxA], "and", imgs_filename[idxB])
+			#print ("DIFF Width/Height: ", imgs_filename[idxA], "and", imgs_filename[idxB])
 			is_similar = False
 
 		# Get MSSISM and PSNR
@@ -122,7 +122,7 @@ def similarityCheck(imgs_filename, imgs, imgs_width, imgs_height):
 		# Check similarity with MSSISM
 		if (sim_sum <= MSSISM_MIN_THRESHOLD):
 			# Images are not similar
-			print ("DIFF MSSISM ", imgs_filename[idxA], "and", imgs_filename[idxB])
+			#print ("DIFF MSSISM ", imgs_filename[idxA], "and", imgs_filename[idxB])
 			is_similar = False
 
 		# Save img filename in group
@@ -133,19 +133,77 @@ def similarityCheck(imgs_filename, imgs, imgs_width, imgs_height):
 		#print ("group_counter", group_counter, "\t", similar_img_groups)
 
 		#end = time.perf_counter()
-		print (imgs_filename[idxA], "and", imgs_filename[idxB],
-			"  sim_sum:", sim_sum, "  psnr:", psnr_val, "  similarity:", sim_val)
+		#print (imgs_filename[idxA], "and", imgs_filename[idxB],
+		#	"  sim_sum:", sim_sum, "  psnr:", psnr_val, "  similarity:", sim_val)
 		#print ("time sim", round((end-start)*1000,3), " ms")
 
 	# Display groups
+	'''
 	for i in range(0, len(similar_img_groups)):
 		imgs_nb = len(similar_img_groups[i])
 		if (imgs_nb > 0):
 			print ("GROUP", i, ": ", similar_img_groups[i][0], "to", similar_img_groups[i][(imgs_nb-1)])
+	'''
+	return similar_img_groups
+
+
+
+# @brief        Similarity check
+# @param[in]    imgs_obj List o images object with filename, width, height and r_img data
+# @return       Group of similar images
+def similarityCheck2(imgs_obj):
+	similar_img_groups = [[]]
+	group_counter = 0
+	# Save first img in first group
+	similar_img_groups[group_counter].append(imgs_obj[0].filename)
+	imgs_obj[0].group_index = group_counter
+
+	for i in range(1, len(imgs_obj)):
+		#start = time.perf_counter()
+		idxA = i-1
+		idxB = i
+		sim_val = [0, 0, 0, 0]
+		psnr_val = 0
+		is_similar = True
+
+		# Check images width and height
+		if (imgs_obj[idxA].width != imgs_obj[idxB].width or imgs_obj[idxA].height != imgs_obj[idxB].height):
+			# Images have different size and are not in the same group
+			#print ("DIFF Width/Height: ", imgs_obj[idxA].filename, "and", imgs_obj[idxB].filename)
+			is_similar = False
+
+		# Get MSSISM and PSNR
+		sim_val = getMSSISM(imgs_obj[idxA].r_img, imgs_obj[idxB].r_img)
+		sim_sum = round(sum(sim_val)/3, 2)
+		psnr_val = round(getPSNR(imgs_obj[idxA].r_img, imgs_obj[idxB].r_img), 2)
+
+		sim_val = [round(i, 2) for i in sim_val]
+
+		# Check similarity with MSSISM
+		if (sim_sum <= MSSISM_MIN_THRESHOLD):
+			# Images are not similar
+			#print ("DIFF MSSISM ", imgs_obj[idxA].filename, "and", imgs_obj[idxB].filename)
+			is_similar = False
+
+		# Save img filename in group
+		if (is_similar == False):
+			group_counter += 1
+			similar_img_groups.append([])
+		similar_img_groups[group_counter].append(imgs_obj[idxB].filename)
+		imgs_obj[idxB].group_index = group_counter
+		#print ("group_counter", group_counter, "\t", similar_img_groups)
+
+		#end = time.perf_counter()
+		#print (imgs_obj[idxA].filename, "and", imgs_obj[idxB].filename,
+		#	"  sim_sum:", sim_sum, "  psnr:", psnr_val, "  similarity:", sim_val)
+		#print ("time sim", round((end-start)*1000,3), " ms")
+
+	return similar_img_groups
 
 
 
 
+'''
 ## MAIN ##
 # Get images filename in folder
 imgs_path = []
@@ -196,3 +254,4 @@ print ("time resize", round((end-start)*1000,3), " ms")
 similarityCheck(imgs_filename, r_imgs, imgs_width, imgs_height)
 #end = time.perf_counter()
 #print ("time sim", round((end-start)*1000,3), " ms")
+'''
