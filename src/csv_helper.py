@@ -12,7 +12,7 @@ def writeCSV(list):
 	filename = "log_" + time_str + ".csv"
 	#print (filename)
 
-	with open(filename, 'w', newline='', encoding='utf-8') as file:
+	with open(filename, 'a', newline='', encoding='utf-8') as file:
 		writer = csv.writer(file)
 		writer.writerows(list)
 

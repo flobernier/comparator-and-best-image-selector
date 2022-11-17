@@ -25,7 +25,7 @@ imgs_obj = getImgPath2(path)
 imgs_nb = len(imgs_obj)
 #end = time.perf_counter()
 #print ("time fname", round((end-start)*1000,3), " ms")
-print ("Number of images: ", imgs_nb) 
+print ("Number of images: ", imgs_nb)
 
 # Open images
 start = time.perf_counter()
@@ -85,21 +85,21 @@ for i in range(0, len(groups_info)):
 #	printImageInfo(groups_info[i])
 
 	# Get images score
-#	imgs_score = printImageScore(groups_info[i])
-	[best_index, high_indexes] = getBestImages(groups_info[i])
+	[best_index, high_indexes, imgs_score] = getBestImages(groups_info[i])
 	if (type(best_index) == list):
-		print ("Best image are:\t\t", end=" ")
-		for j in range(0, len(best_index)):
-			print (groups_info[i][best_index[j]][0], "\t", end=" ")
-		print("")
-	else:	
-		print ("Best image is:", groups_info[i][best_index][0])
+		best_fnames = [groups_info[i][j][0] for j in best_index]
+		print ("Best image are:", best_fnames, "")
+	else:
+		best_fnames = groups_info[i][best_index][0]
+		print ("Best image is:", best_fnames)
 
 	if (len(high_indexes) > 1):
 		high_fnames = [groups_info[i][j][0] for j in high_indexes]
 		print ("High score images:", high_fnames)
+	else:
+		high_fnames = []
 	print ("")
-#	saveCSV(groups_info[i], imgs_score)
+	saveCSV(groups_info[i], imgs_score, best_fnames, high_fnames)
 #end = time.perf_counter()
 #print ("time print ", round((end-start)*1000, 3), " ms")
 

@@ -257,7 +257,7 @@ def printImageScore(imgs_info):
 
 # @brief	Compute and Return best image and high score images indexes
 # @param[in]	imgs_info Image information with predefined format
-# @return	List of [best_score_index and [high_score_index1, ...]]
+# @return	List of [best_score_index and [high_score_index1, ...] and [total_score_img1, ...]]
 def getBestImages(imgs_info):
 	my_stats = CriterionStats(imgs_info)
 
@@ -272,13 +272,15 @@ def getBestImages(imgs_info):
 	high_fnames = [imgs_info[i][0] for i in my_stats.high_index]
 	#print ("High score images:", high_fnames)
 
-	return [my_stats.best_index, my_stats.high_index]
+	return [my_stats.best_index, my_stats.high_index, my_stats.score_tot]
 
 
 # @brief	Format and Write image information and score to a csv file
 # @param[in]	imgs_info Image information with predefined format
 # @param[in]	imgs_score List of total score for each image
-def saveCSV(imgs_info, imgs_score):
+# @param[in]	best_filenames List of best image filenames
+# @param[in]	high_filenames List of high score images filenames
+def saveCSV(imgs_info, imgs_score, best_filenames, high_filenames):
 	imgs_nb = len(imgs_info)
 	rows_list = []
 
@@ -302,6 +304,18 @@ def saveCSV(imgs_info, imgs_score):
 	rows_list.append(["score"] + [str(imgs_score[i]) for i in range(imgs_nb)])
 	#print (rows_list)
 
+	# Best image
+	if (type(best_filenames) == list):
+		rows_list.append(["Best image:"] + [best_filenames[i] for i in range(len(best_filenames))])
+	else:
+		rows_list.append(["Best image:"] + [best_filenames])
+
+	# High score images
+	if (len(high_filenames) > 1):
+		rows_list.append(["High score images:"] + [high_filenames[i] for i in range(len(high_filenames))])
+
+	# Separation
+	rows_list.append("")
+
 	# Write to CSV
 	writeCSV(rows_list)
-
