@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from src.criterion import *
+from parameters import *
 
 # Constants
 CRIT_ID_FILENAME   = 0
@@ -35,14 +36,14 @@ class CriterionStats:
 		# By default, the file size weight is less important than the others
 		# The filename, resolution and mean rgb color criteria are not used
 		self.criteria.append(Criterion("name",           0, 0))
-		self.criteria.append(Criterion("size (kBytes)", -1, 1)) # Image size (smaller better)
+		self.criteria.append(Criterion("size (kBytes)", -1, WEIGHT_SIZE)) # Image size (lower better)
 		self.criteria.append(Criterion("resolution",     0, 0))
 		self.criteria.append(Criterion("mean RGB color", 0, 0))
-		self.criteria.append(Criterion("brightness 2",  +1, 2)) # Brightness (higher better)
-		self.criteria.append(Criterion("saturation",    -1, 2)) # Saturation (smaller better)
-		self.criteria.append(Criterion("white_pixels1", -1, 2)) # White pixels percentage 1 (smaller better)
-		self.criteria.append(Criterion("white_pixels2", -1, 2)) # White pixels percentage 2 (smaller better)
-		self.criteria.append(Criterion("blur",          +1, 2)) # Blur (higher better)
+		self.criteria.append(Criterion("brightness 2",  +1, WEIGHT_BRIGHTNESS)) # Brightness (higher better)
+		self.criteria.append(Criterion("saturation",    -1, WEIGHT_SATURATION)) # Saturation (lower better)
+		self.criteria.append(Criterion("white_pixels1", -1, WEIGHT_WPP1)) # White pixels percentage 1 (lower better)
+		self.criteria.append(Criterion("white_pixels2", -1, WEIGHT_WPP2)) # White pixels percentage 2 (lower better)
+		self.criteria.append(Criterion("blur",          +1, WEIGHT_BLUR)) # Blur (higher better)
 
 		self.getStats()
 		self.getTotalScore()

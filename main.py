@@ -72,8 +72,9 @@ end = time.perf_counter()
 print ("time gInfo ", round((end-start)*1000, 0), " ms")
 
 
-# Display info
+# Display info and Write to CSV
 #start = time.perf_counter()
+writeCSVHeader()
 for i in range(0, len(groups_info)):
 	group_img_nb = len(groups[i])
 	# Do nothing if there is only one image in a group
@@ -83,7 +84,7 @@ for i in range(0, len(groups_info)):
 #	printImageInfo(groups_info[i])
 
 	# Get images score
-	[best_index, high_indexes, imgs_score] = getBestImages(groups_info[i])
+	[best_index, high_indexes, imgs_score, score_std] = getBestImages(groups_info[i])
 	if (type(best_index) == list):
 		best_fnames = [groups_info[i][j][0] for j in best_index]
 		print ("Best image are:", best_fnames, "")
@@ -97,7 +98,7 @@ for i in range(0, len(groups_info)):
 	else:
 		high_fnames = []
 	print ("")
-	saveCSV(groups_info[i], imgs_score, best_fnames, high_fnames)
+	saveCSV(groups_info[i], imgs_score, best_fnames, high_fnames, score_std)
 #end = time.perf_counter()
 #print ("time print ", round((end-start)*1000, 3), " ms")
 

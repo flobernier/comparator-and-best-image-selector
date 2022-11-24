@@ -255,7 +255,7 @@ def printImageScore(imgs_info):
 
 # @brief	Compute and Return best image and high score images indexes
 # @param[in]	imgs_info Image information with predefined format
-# @return	List of [best_score_index and [high_score_index1, ...] and [total_score_img1, ...]]
+# @return	List of [best_score_index and [high_score_index1, ...] and [total_score_img1, ...] and total_score_standard_deviation]
 def getBestImages(imgs_info):
 	my_stats = CriterionStats(imgs_info)
 
@@ -270,7 +270,15 @@ def getBestImages(imgs_info):
 	high_fnames = [imgs_info[i][0] for i in my_stats.high_index]
 	#print ("High score images:", high_fnames)
 
-	return [my_stats.best_index, my_stats.high_index, my_stats.score_tot]
+	return [my_stats.best_index, my_stats.high_index, my_stats.score_tot, my_stats.score_tot_std]
+
+
+# @brief	Write line(s) at the beginning of the CSV file
+def writeCSVHeader():
+	rows_list = []
+	rows_list.append(["LB = Lower is Better; HB = Higher is Better"])
+	rows_list.append("")
+	writeCSV(rows_list)
 
 
 # @brief	Format and Write image information and score to a csv file
@@ -278,7 +286,8 @@ def getBestImages(imgs_info):
 # @param[in]	imgs_score List of total score for each image
 # @param[in]	best_filenames List of best image filenames
 # @param[in]	high_filenames List of high score images filenames
-def saveCSV(imgs_info, imgs_score, best_filenames, high_filenames):
+# @param[in]	score_std Standard deviation of similar images score
+def saveCSV(imgs_info, imgs_score, best_filenames, high_filenames, score_std):
 	imgs_nb = len(imgs_info)
 	rows_list = []
 
@@ -290,27 +299,30 @@ def saveCSV(imgs_info, imgs_score, best_filenames, high_filenames):
 	rows_list.append(imgs_id)
 
 	# Format rows info
-	row_names = ["name", "size (kBytes)", "resolution", "mean RGB color",
-		     "brightness 2", "mean saturation", "white pixels1",
-		     "white pixels2", "blur"]
+	row_names = ["Name", "Size (kBytes) (LB)", "Resolution", "Mean RGB color",
+		     "Brightness (HB)", "Mean Saturation (LB)", "White pixels1 (LB)",
+		     "White pixels2 (LB)", "Blur (HB)"]
 	for r in range(len(row_names)):
 		row = [row_names[r]] + [str(imgs_info[i][r]) for i in range(imgs_nb)]
 		#print (row)
 		rows_list.append(row)
 
 	# Score
-	rows_list.append(["score"] + [str(imgs_score[i]) for i in range(imgs_nb)])
+	rows_list.append(["Score (HB)"] + [str(imgs_score[i]) for i in range(imgs_nb)])
 	#print (rows_list)
+
+	# Confidence
+	rows_list.append(["Confidence (HB)"] + [round(score_std,2)])
 
 	# Best image
 	if (type(best_filenames) == list):
-		rows_list.append(["Best image:"] + [best_filenames[i] for i in range(len(best_filenames))])
+		rows_list.append(["Best image"] + [best_filenames[i] for i in range(len(best_filenames))])
 	else:
-		rows_list.append(["Best image:"] + [best_filenames])
+		rows_list.append(["Best image"] + [best_filenames])
 
 	# High score images
 	if (len(high_filenames) > 1):
-		rows_list.append(["High score images:"] + [high_filenames[i] for i in range(len(high_filenames))])
+		rows_list.append(["High score images"] + [high_filenames[i] for i in range(len(high_filenames))])
 
 	# Separation
 	rows_list.append("")
