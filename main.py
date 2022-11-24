@@ -3,25 +3,20 @@
 import cv2 as cv
 import numpy as np
 import math
+from parameters import *
 from src.image import *
 from src.helper import *
-from similarity import *
-
+from src.similarity import *
 import os
 import time
 
-## PARAMETERS ##
-path = "./test/samples2"
-SIMILARITY_WIDTH     = 80 # pixels
-SIMILARITY_HEIGHT    = 60 # pixels
-MSSISM_MIN_THRESHOLD = 0.3 # % - MSSISM minimum threshold for two similar images
-FAST_MODE = True
+SHOULD_SHOW = False
 
 
 ## MAIN ##
 # Get images paths and filenames in folder
 #start = time.perf_counter()
-imgs_obj = getImgPath2(path)
+imgs_obj = getImgPath(path)
 imgs_nb = len(imgs_obj)
 #end = time.perf_counter()
 #print ("time fname", round((end-start)*1000,3), " ms")
@@ -49,7 +44,7 @@ for i in range(0, imgs_nb):
 # Similarity check
 start = time.perf_counter()
 groups = [[]]
-groups = similarityCheck2(imgs_obj)
+groups = similarityCheck(imgs_obj)
 groups_nb = len(groups)
 end = time.perf_counter()
 print ("time sim   ", round((end-start)*1000, 3), " ms")
@@ -81,6 +76,9 @@ print ("time gInfo ", round((end-start)*1000, 0), " ms")
 #start = time.perf_counter()
 for i in range(0, len(groups_info)):
 	group_img_nb = len(groups[i])
+	# Do nothing if there is only one image in a group
+	if (group_img_nb <= 1):
+		continue
 	print ("GROUP", i, ": ", groups[i][0], "to", groups[i][(group_img_nb-1)])
 #	printImageInfo(groups_info[i])
 
@@ -107,16 +105,13 @@ for i in range(0, len(groups_info)):
 '''
 # Show comparison
 if SHOULD_SHOW:
-	# Resize
-	w = 1280/imgs_nb
-	r = w / imgs[0].shape[1]
-	dim = (int(w), int(imgs[0].shape[0] * r))
-	r_imgs = [cv.resize(i, dim, cv.INTER_AREA) for i in imgs]
-
-	# Concatenate
-	img0 = cv.hconcat(r_imgs)
-
-	cv.imshow("Comparison", img0)
-	cv.waitKey(0)
+	# Get list of images for each group of similar images
+	disp_imgs = []
+	i = 0
+	for j in range(0, len(groups[i])):
+		for k in range(0, len(imgs_obj)):
+			if (imgs_obj[k].filename == groups[i][j]):
+				disp_imgs.append(imgs_obj[k].img)
+	print (groups[i])
+	showComparison(disp_imgs)
 '''
-

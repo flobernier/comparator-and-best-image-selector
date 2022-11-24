@@ -8,7 +8,7 @@ from src.helper import *
 # @brief	Get the list of the images paths and filenames inside the source folder
 # @param[in]	path Source folder path
 # @return	List of images objects
-def getImgPath2(path):
+def getImgPath(path):
 	imgs_obj = []
 	# Get filenames from path
 	imgs_filename = os.listdir(path)
@@ -27,6 +27,7 @@ def getImgPath2(path):
 	return imgs_obj
 
 
+# @brief	ImageClass class
 class ImageClass:
 	def __init__(self, _path, _filename):
 		self.path = _path

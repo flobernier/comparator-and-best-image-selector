@@ -85,27 +85,6 @@ def getBlurLevel(img):
 
 
 
-# @brief	Get the list of the images paths and filenames inside the source folder
-# @param[in]	path Source folder path
-# @return	List of images paths and filenames
-def getImgPath(path):
-	imgs_path = []
-	# Get filenames from path
-	imgs_filename = os.listdir(path)
-	imgs_filename.sort()
-	#print (imgs_filename)
-
-	# Add images path to list only for supported format
-	sup_format = [".jpeg", ".jpg", ".png", ".bmp"]
-	for filename in imgs_filename:
-		ext = os.path.splitext(filename)[1]
-		#print (filename, " ", ext)
-		if ext.casefold() in (format.casefold() for format in sup_format):
-			imgs_path.append(path + "/" + filename)
-
-	return (imgs_path, imgs_filename)
-
-
 # @brief	Open image
 # @param[in]	img_filename Source image filename
 # @return	Image
@@ -114,6 +93,25 @@ def openImage(img_filename):
 	if img is None:
 		print ("Could not read ", img_filename)
 	return img
+
+
+# @brief	Show images side by side
+# @param[in]	imgs List of images to display side by side
+def showComparison(imgs):
+	imgs_nb = len(imgs)
+	if imgs_nb <= 0:
+		return -1
+	# Resize
+	w = 1280/imgs_nb
+	r = w / imgs[0].shape[1]
+	dim = (int(w), int(imgs[0].shape[0] * r))
+	r_imgs = [cv.resize(i, dim, cv.INTER_AREA) for i in imgs]
+
+	# Concatenate
+	img0 = cv.hconcat(r_imgs)
+
+	cv.imshow("Comparison", img0)
+	cv.waitKey(0)
 
 
 # @brief	Get image information
